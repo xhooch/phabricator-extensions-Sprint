@@ -76,7 +76,7 @@ final class SprintProjectProfileController
 
     $stories = id(new PhabricatorFeedQuery())
       ->setViewer($viewer)
-      ->setFilterPHIDs(
+      ->withFilterPHIDs(
         array(
           $project->getPHID(),
         ))
