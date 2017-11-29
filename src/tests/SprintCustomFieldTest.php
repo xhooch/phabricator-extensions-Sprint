@@ -20,24 +20,6 @@ final class SprintCustomFieldTest extends SprintTestCase {
     $this->assertEquals($fieldname, 'When a sprint starts');
   }
 
-  public function testgetStoryPointsFieldName() {
-    $subclassname = new SprintTaskStoryPointsField();
-    $fieldname = $subclassname->getFieldName();
-    $this->assertEquals($fieldname, 'Story Points');
-  }
-
-  public function testgetStoryPointsFieldKey() {
-    $subclassname = new SprintTaskStoryPointsField();
-    $fieldname = $subclassname->getFieldKey();
-    $this->assertEquals($fieldname, 'isdc:sprint:storypoints');
-  }
-
-  public function testgetStoryPointsFieldDescription() {
-    $subclassname = new SprintTaskStoryPointsField();
-    $fieldname = $subclassname->getFieldDescription();
-    $this->assertEquals($fieldname, 'Estimated story points for this task');
-  }
-
   public function testgetEndFieldName() {
     $subclassname = new SprintEndDateField();
     $fieldname = $subclassname->getFieldName();

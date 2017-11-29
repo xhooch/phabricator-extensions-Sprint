@@ -69,7 +69,6 @@ phutil_register_library_map(array(
     'SprintStats' => 'storage/SprintStats.php',
     'SprintStatsTest' => 'tests/SprintStatsTest.php',
     'SprintTableView' => 'view/SprintTableView.php',
-    'SprintTaskStoryPointsField' => 'customfield/SprintTaskStoryPointsField.php',
     'SprintTestCase' => 'tests/SprintTestCase.php',
     'SprintUIObjectBoxView' => 'view/SprintUIObjectBoxView.php',
     'SprintValidator' => 'util/SprintValidator.php',
@@ -135,10 +134,6 @@ phutil_register_library_map(array(
     'SprintSetStartEndDatesConduitAPIMethod' => 'SprintConduitAPIMethod',
     'SprintStatsTest' => 'SprintTestCase',
     'SprintTableView' => 'AphrontView',
-    'SprintTaskStoryPointsField' => array(
-      'ManiphestCustomField',
-      'PhabricatorStandardCustomFieldInterface',
-    ),
     'SprintTestCase' => 'PHPUnit_Framework_TestCase',
     'SprintUIObjectBoxView' => 'AphrontView',
     'SprintValidator' => 'Phobject',
