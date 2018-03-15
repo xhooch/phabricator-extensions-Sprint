@@ -77,6 +77,7 @@ phutil_register_library_map(array(
     'TaskTableDataProvider' => 'storage/TaskTableDataProvider.php',
     'TasksTableView' => 'view/burndown/TasksTableView.php',
     'UserOpenTasksView' => 'view/reports/UserOpenTasksView.php',
+    'SprintEdgeTransaction' => 'storage/SprintEdgeTransaction.php',
   ),
   'function' => array(),
   'xmap' => array(
