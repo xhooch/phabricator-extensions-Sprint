@@ -185,25 +185,104 @@ final class BoardDataProvider {
     return $xactions;
   }
 
-  private function buildChartfromBoardData() {
+	private function buildChartfromBoardData() {
+		$date_array = $this->stats->buildDateArray($this->start, $this->end,
+			$this->timezone);
 
-    $date_array = $this->stats->buildDateArray($this->start, $this->end,
-        $this->timezone);
-    $xactions = $this->getProjectColumnXactions();
-    $xaction_map = mpull($xactions, null, 'getPHID');
+		$xactions = $this->getProjectColumnXactions();
+		$xaction_map = mpull($xactions, null, 'getPHID');
 
-    $sprint_xaction = id(new SprintColumnTransaction())
-        ->setViewer($this->viewer)
-        ->setTasks($this->tasks)
-        ->setQuery($this->query)
-        ->setProject($this->project)
-        ->setEvents($xactions);
+		$sprint_xaction = id(new SprintColumnTransaction())
+			->setViewer($this->viewer)
+			->setTasks($this->tasks)
+			->setQuery($this->query)
+			->setProject($this->project)
+			->setEvents($xactions);
+		$dates = $sprint_xaction->parseEvents($date_array, $xaction_map);
 
-    $dates = $sprint_xaction->parseEvents($date_array, $xaction_map);
-    $this->stats->setTasks($this->tasks);
-    $sprint_data = $this->stats->setSprintData($dates);
-    $data = $this->stats->buildDataSet($sprint_data);
-    $this->chartdata = $this->stats->transposeArray($data);
-    return $this;
-  }
+		$timeStamp = (new DateTime())->getTimestamp();
+		if ($timeStamp > $this->start) {
+
+			$xactions = $this->query->getXactionProjects();
+
+			$sprintEdgeTransaction = new SprintEdgeTransaction();
+			$sprintEdgeTransaction
+				->setProject($this->project)
+				->setViewer($this->viewer);
+
+			$tasks = $sprintEdgeTransaction->getStartTasks($xactions, $this->start);
+
+			$xactionToDates = $this->prepareXactions($xactions);
+
+			$totalPoints = id(new SprintPoints())
+				->setTasks($tasks)
+				->sumTotalTaskPoints();
+			$i = $totalClose = 0;
+			foreach ($dates as $day => $date) {
+
+				if ($i) {
+					$tasks = $sprintEdgeTransaction->getXactionTaskToday($xactionToDates, $date, $tasks);
+					$totalPoints = id(new SprintPoints())
+						->setTasks($tasks)
+						->sumTotalTaskPoints();
+				}
+
+				$date->setPointsTotal($totalPoints);
+
+				$points_closed_today = $date->getPointsClosedToday();
+				$points_reopened_today = $date->getPointsReopenedToday();
+				$points_today = $points_reopened_today - $points_closed_today;
+
+				$totalClose += $points_today;
+				$points_remaining = $totalClose + $totalPoints;
+
+				$date->setPointsRemaining($points_remaining);
+
+				$i++;
+			}
+
+			$dates = $this->stats->computeIdealPoints($dates);
+			$data = $this->stats->buildDataSet($dates);
+
+		} else {
+			$this->stats->setTasks($this->tasks);
+			$sprint_data = $this->stats->setSprintData($dates);
+			$data = $this->stats->buildDataSet($sprint_data);
+		}
+
+		$this->chartdata = $this->stats->transposeArray($data);
+		return $this;
+	}
+
+	private function prepareXactions($xactions) {
+		$result = [];
+		foreach ($xactions as $xaction) {
+			$taskPHID = $xaction->getObjectPHID();
+			$old = idx($xaction->getOldValue(), 0);
+			$new = idx($xaction->getNewValue(), 0);
+			$dateCreated = phabricator_format_local_time($xaction->getDateCreated(),
+				$this->viewer, 'D M j');
+
+			if ($old == $this->project->getPHID()) {
+				$result[$dateCreated][$taskPHID][] = SprintEdgeTransaction::TYPE_REMOVE;
+			} elseif ($new == $this->project->getPHID()) {
+				$result[$dateCreated][$taskPHID][] = SprintEdgeTransaction::TYPE_ADD;
+			}
+		}
+
+		foreach ($result as $date => $tasks) {
+			foreach ($tasks as $task => $actions) {
+				if (count($actions)%2 == 0) {
+					unset($result[$date][$task]);
+					if (empty($result[$date])) {
+						unset($result[$date]);
+					}
+				} else {
+					$result[$date][$task] = $actions[0];
+				}
+			}
+		}
+
+		return $result;
+	}
 }

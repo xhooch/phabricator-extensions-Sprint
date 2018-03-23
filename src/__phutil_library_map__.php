@@ -60,6 +60,7 @@ phutil_register_library_map(array(
     'SprintProjectProfilePanelEngine' => 'engine/SprintProjectProfilePanelEngine.php',
     'SprintProjectViewController' => 'controller/SprintProjectViewController.php',
     'SprintQuery' => 'query/SprintQuery.php',
+    'ManiphestTransactionCustomQuery' => 'query/ManiphestTransactionCustomQuery.php',
     'SprintQueryTest' => 'tests/SprintQueryTest.php',
     'SprintReportBurnUpView' => 'view/reports/SprintReportBurnUpView.php',
     'SprintReportController' => 'controller/SprintReportController.php',
@@ -76,6 +77,7 @@ phutil_register_library_map(array(
     'TaskTableDataProvider' => 'storage/TaskTableDataProvider.php',
     'TasksTableView' => 'view/burndown/TasksTableView.php',
     'UserOpenTasksView' => 'view/reports/UserOpenTasksView.php',
+    'SprintEdgeTransaction' => 'storage/SprintEdgeTransaction.php',
   ),
   'function' => array(),
   'xmap' => array(
@@ -126,6 +128,7 @@ phutil_register_library_map(array(
     'SprintProjectProfilePanelEngine' => 'PhabricatorProfileMenuEngine',
     'SprintProjectViewController' => 'SprintController',
     'SprintQuery' => 'SprintDAO',
+    'ManiphestTransactionCustomQuery' => 'PhabricatorApplicationTransactionQuery',
     'SprintQueryTest' => 'SprintTestCase',
     'SprintReportBurnUpView' => 'SprintView',
     'SprintReportController' => 'SprintController',

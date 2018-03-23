@@ -436,4 +436,14 @@ final class SprintQuery extends SprintDAO {
       return null;
     }
   }
+
+	public function getXactionProjects() {
+		$value = '["' . $this->projectPHID . '"]';
+		$query = new ManiphestTransactionCustomQuery();
+		$query->setViewer($this->viewer);
+		$query->withTransactionTypes([PhabricatorTransactions::TYPE_EDGE]);
+		$query->withValue($value);
+		$xactions = $query->execute();
+		return $xactions;
+	}
 }
